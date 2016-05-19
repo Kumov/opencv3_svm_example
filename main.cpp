@@ -21,13 +21,23 @@ int main(int, char**)
     Mat trainingDataMat(4, 2, CV_32FC1, trainingData);
 
     // Set up SVM's parameters
-    Ptr<SVM> svm = SVM::create();
-    svm->setType(SVM::C_SVC);
-    svm->setKernel(SVM::LINEAR);
+    Ptr<ml::SVM> svm = ml::SVM::create();
+    svm->setType(ml::SVM::C_SVC);
+    svm->setKernel(SVM::INTER);
+//    svm->setKernel(SVM::RBF);
+//    svm->setKernel(SVM::POLY);
+//    svm->setC(1.0);
+//    svm->setDegree(5.0);
+//    svm->setGamma(1.0);
     svm->setTermCriteria(TermCriteria(TermCriteria::MAX_ITER, 100, 1e-6));
 
     // Train the SVM
-    svm->train(trainingDataMat, ROW_SAMPLE, labelsMat);
+    svm->train(ml::TrainData::create(trainingDataMat, ml::ROW_SAMPLE, labelsMat));
+
+    // Save and load SVM
+//    svm->save("ex_svm.xml");
+//    svm= cv::Algorithm::load<ml::SVM>("ex_svm.xml"); // something is wrong
+
 
     Vec3b green(0,255,0), blue (255,0,0);
     // Show the decision regions given by the SVM
@@ -54,6 +64,7 @@ int main(int, char**)
     // Show support vectors
     thickness = 2;
     lineType  = 8;
+
     Mat sv = svm->getSupportVectors();
 
     for (int i = 0; i < sv.rows; ++i)
